@@ -12,6 +12,7 @@
     "flat": "^2.0.0",
     "flickrapi": "^0.4.2",
     "grunt": "0.4.5",
+    "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "0.6.0",
     "grunt-contrib-coffee": "0.13.0",
     "grunt-contrib-concat": "0.5.1",

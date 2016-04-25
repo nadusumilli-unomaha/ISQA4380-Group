@@ -26,6 +26,9 @@ module.exports = {
     var photoURLs = [];
     var thumbPhotoUrls = [];
     var largePhotoUrls = [];
+    var real_songs= [];
+    var lyrics = [];
+    var lyricTitle = [];
 
     ////////////////////////////////////////////////////////////////////////////
     //////////////////////////get songs/////////////////////////////////////////
@@ -80,6 +83,14 @@ module.exports = {
         }
         songlist = songlist.substring(0, songlist.length - 1);
         Spotify.songlist = songlist;
+        
+        for(i = 0;i < songTitle; i = i+2)
+        {
+          var song = [songTitle[i],songTitle[i+1]];
+          console.log("song twos: "+song);
+          real_songs.push(song);
+        }
+
         callback();
       });
     };
@@ -114,6 +125,7 @@ module.exports = {
     function get_lyric_id(song, callback){
       console.log("song artist: " + song[1])
       console.log("song title: " + song[0])
+      lyricTitle.push(song[0]);
       options = {
         host: 'api.musixmatch.com',
         port: 80,
@@ -156,7 +168,7 @@ module.exports = {
       options1 = {
         host: 'api.musixmatch.com',
         port: 80,
-        path: '/ws/1.1/track.lyrics.get?apikey=50914b5c128424e7f5b036677fd64415&track_id='+encodeURIComponent(lyric_id[0]),
+        path: '/ws/1.1/track.lyrics.get?apikey=50914b5c128424e7f5b036677fd64415&track_id='+encodeURIComponent(song),
         method: 'GET'
       };
       var web_request = http.request(options1, function(response){
@@ -183,12 +195,12 @@ module.exports = {
         //console.log("\nLyrics: "+lyric_data.message.body.lyrics.lyrics_body);//lyric_data.find("Lyric");
         if(lyric_data.message.body.lyrics){
           var fulllyrics = lyric_data.message.body.lyrics.lyrics_body;
-          Spotify.lyrics = fulllyrics
+          lyrics.push(fulllyrics)
           //song.lyrics.replace(new RegExp('\r?\n','g','<br/>'));
           console.log("********Song Lyrics*****************\n\n"+fulllyrics);
         }
         else{
-          Spotify.lyrics = 'Lyrics for the song were not Found!';
+          lyrics.push('Lyrics for the song were not Found!');
         }
         callback();
       });
@@ -367,10 +379,12 @@ module.exports = {
       console.log("finalword: " + num);
       async.each([num], get_synonyms, function (err2) {
         if(err2) console.log(err2);
-        async.each([songTitle], get_lyric_id, function(err3){
+        async.each(real_songs, get_lyric_id, function(err3){
           if(err3) console.log(err3);
-          async.each([songTitle], get_current_lyrics, function(err4){
+          async.each(lyric_id, get_current_lyrics, function(err4){
             if (err4) console.log(err4);
+            Spotify.Lyric = lyrics;
+            Spotify.lyricTitle = lyricTitle;
               async.each([Spotify.Word_List[0]], get_pictures, function (err5) {
               if(err5) console.log(err5)
                 console.log(Spotify.Photos);
