@@ -53,7 +53,7 @@ module.exports.connections = {
     adapter: 'sails-mysql',
     user: 'spotify_api',
     password: 'thisismypassword',
-    database:'spotify',
+    database:'nodejs',
     host: process.env.OPENSHIFT_MYSQL_DB_HOST,
     port: process.env.OPENSHIFT_MYSQL_DB_PORT
   },
