@@ -37,7 +37,7 @@ module.exports = {
       options3 = {
         host: 'developer.echonest.com',
         port: 80,
-        path: '/api/v4/playlist/static?api_key=ELC2QPZOV4OUDIX1O&artist=' + song + '&type=artist-radio&results=4&bucket=tracks&bucket=id:spotify&limit=true',
+        path: '/api/v4/playlist/static?api_key=ELC2QPZOV4OUDIX1O&artist=' + song + '&type=artist-radio&results=10&bucket=tracks&bucket=id:spotify&limit=true',
         method: 'GET'
       };
       var webservice_request = http.request(options3, function (response) {
@@ -50,6 +50,7 @@ module.exports = {
       var webservice_data = "";
       webservice_response.on('error', function (e) {
         console.log(e.message);
+        console.log("errorosdafhseiudfgsadyugfuiahudshgahsdio;gas");
         callback('Error: ' + e.message);
       });
       webservice_response.on('data', function (chunk) {
@@ -84,10 +85,9 @@ module.exports = {
         songlist = songlist.substring(0, songlist.length - 1);
         Spotify.songlist = songlist;
         
-        for(i = 0;i < songTitle; i = i+2)
+        for(i = 0;i < songTitle.length; i = i+2)
         {
           var song = [songTitle[i],songTitle[i+1]];
-          console.log("song twos: "+song);
           real_songs.push(song);
         }
 
@@ -168,7 +168,7 @@ module.exports = {
       options1 = {
         host: 'api.musixmatch.com',
         port: 80,
-        path: '/ws/1.1/track.lyrics.get?apikey=50914b5c128424e7f5b036677fd64415&track_id='+encodeURIComponent(lyric_id[0]),
+        path: '/ws/1.1/track.lyrics.get?apikey=50914b5c128424e7f5b036677fd64415&track_id='+encodeURIComponent(song),
         method: 'GET'
       };
       var web_request = http.request(options1, function(response){
@@ -379,12 +379,12 @@ module.exports = {
       console.log("finalword: " + num);
       async.each([num], get_synonyms, function (err2) {
         if(err2) console.log(err2);
-        async.each([songTitle], get_lyric_id, function(err3){
+        async.each(real_songs, get_lyric_id, function(err3){
           if(err3) console.log(err3);
-          async.each([songTitle], get_current_lyrics, function(err4){
+          async.each(lyric_id, get_current_lyrics, function(err4){
             if (err4) console.log(err4);
-              //Spotify.Lyric = lyrics;
-              //Spotify.lyricTitle = lyricTitle;
+              Spotify.lyric = lyrics;
+              Spotify.lyricTitle = lyricTitle;
               async.each([Spotify.Word_List[0]], get_pictures, function (err5) {
               if(err5) console.log(err5)
                 console.log(Spotify.Photos);
